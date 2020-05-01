@@ -33,7 +33,7 @@ def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead):
     "SET_ME_X01": 1,
     "DISTANCE": 0,
     "MINI_CAR": lead,
-    "SET_ME_X3": 3,
+    "SET_ME_X3": 1, #3,
     "SET_ME_1": 1,
     "RELEASE_STANDSTILL": not standstill_req,
     "CANCEL_REQ": pcm_cancel,

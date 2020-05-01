@@ -331,6 +331,11 @@ void handle_message(UIState *s, Message * msg) {
 
     s->scene.decel_for_model = datad.decelForModel;
 
+
+    // add bb draw info
+    s->scene.angleSteers = datad.angleSteers;
+    s->scene.angleSteersDes = datad.angleSteersDes;
+
     if (datad.alertSound != cereal_CarControl_HUDControl_AudibleAlert_none && datad.alertSound != s->alert_sound) {
       if (s->alert_sound != cereal_CarControl_HUDControl_AudibleAlert_none) {
         stop_alert_sound(s->alert_sound);
@@ -460,6 +465,9 @@ void handle_message(UIState *s, Message * msg) {
     struct cereal_ThermalData datad;
     cereal_read_ThermalData(&datad, eventd.thermal);
 
+    //add bb draw
+    s->scene.cputemp=datad.cpu0;
+    
     s->scene.networkType = datad.networkType;
     s->scene.networkStrength = datad.networkStrength;
     s->scene.batteryPercent = datad.batteryPercent;

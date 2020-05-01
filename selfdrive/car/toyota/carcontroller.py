@@ -58,6 +58,8 @@ class CarController():
     self.fake_ecus = set()
     if CP.enableCamera: self.fake_ecus.add(Ecu.fwdCamera)
     if CP.enableDsu: self.fake_ecus.add(Ecu.dsu)
+    if CP.enablePandsu: self.fake_ecus.add(Ecu.pandsu)
+    self.fake_ecus.add(Ecu.eon)
 
     self.packer = CANPacker(dbc_name)
 
@@ -101,8 +103,8 @@ class CarController():
       pcm_cancel_cmd = 1
 
     # on entering standstill, send standstill request
-    if CS.out.standstill and not self.last_standstill:
-      self.standstill_req = True
+    #if CS.out.standstill and not self.last_standstill:
+    #  self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
       self.standstill_req = False
@@ -156,8 +158,8 @@ class CarController():
     if pcm_cancel_cmd:
       send_ui = True
 
-    if (frame % 100 == 0 or send_ui) and Ecu.fwdCamera in self.fake_ecus:
-      can_sends.append(create_ui_command(self.packer, steer, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart))
+    #if (frame % 100 == 0 or send_ui) and Ecu.fwdCamera in self.fake_ecus:
+    #  can_sends.append(create_ui_command(self.packer, steer, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart))
 
     if frame % 100 == 0 and Ecu.dsu in self.fake_ecus:
       can_sends.append(create_fcw_command(self.packer, fcw))

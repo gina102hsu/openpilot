@@ -155,6 +155,10 @@ typedef struct UIScene {
   int paTemp;
   int hwType;
   int satelliteCount;
+  //bb draw
+  float angleSteersDes;
+  float angleSteers;
+  float cputemp;
 } UIScene;
 
 typedef struct {

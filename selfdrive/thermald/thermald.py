@@ -259,7 +259,7 @@ def thermald_thread():
       thermal_status = ThermalStatus.green
 
     # **** starting logic ****
-
+    """
     # Check for last update time and display alerts if needed
     now = datetime.datetime.now()
 
@@ -298,7 +298,8 @@ def thermald_thread():
       current_connectivity_alert = None
       params.delete("Offroad_ConnectivityNeeded")
       params.delete("Offroad_ConnectivityNeededPrompt")
-
+    """
+    
     # start constellation of processes when the car starts
     ignition = health is not None and (health.health.ignitionLine or health.health.ignitionCan)
 
@@ -307,8 +308,9 @@ def thermald_thread():
     completed_training = params.get("CompletedTrainingVersion") == training_version
 
     panda_signature = params.get("PandaFirmware")
-    fw_version_match = (panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
-
+    #fw_version_match = (panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
+    fw_version_match = True
+    
     should_start = ignition
 
     # with 2% left, we killall, otherwise the phone will take a long time to boot
@@ -318,20 +320,20 @@ def thermald_thread():
     should_start = should_start and accepted_terms and completed_training and (not do_uninstall)
 
     # check for firmware mismatch
-    should_start = should_start and fw_version_match
+    #should_start = should_start and fw_version_match
 
     # check if system time is valid
-    should_start = should_start and time_valid
+    #should_start = should_start and time_valid
 
     # don't start while taking snapshot
     if not should_start_prev:
       is_taking_snapshot = params.get("IsTakingSnapshot") == b"1"
       should_start = should_start and (not is_taking_snapshot)
 
-    if fw_version_match and not fw_version_match_prev:
-      params.delete("Offroad_PandaFirmwareMismatch")
-    if not fw_version_match and fw_version_match_prev:
-      params.put("Offroad_PandaFirmwareMismatch", json.dumps(OFFROAD_ALERTS["Offroad_PandaFirmwareMismatch"]))
+    #if fw_version_match and not fw_version_match_prev:
+    #  params.delete("Offroad_PandaFirmwareMismatch")
+    #if not fw_version_match and fw_version_match_prev:
+    #  params.put("Offroad_PandaFirmwareMismatch", json.dumps(OFFROAD_ALERTS["Offroad_PandaFirmwareMismatch"]))
 
     # if any CPU gets above 107 or the battery gets above 63, kill all processes
     # controls will warn with CPU above 95 or battery above 60

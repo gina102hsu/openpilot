@@ -85,6 +85,7 @@ void *pigeon_thread(void *crap);
 
 void *safety_setter_thread(void *s) {
   // diagnostic only is the default, needed for VIN query
+  /*
   pthread_mutex_lock(&usb_lock);
   libusb_control_transfer(dev_handle, 0x40, 0xdc, (uint16_t)(cereal::CarParams::SafetyModel::ELM327), 0, NULL, 0, TIMEOUT);
   pthread_mutex_unlock(&usb_lock);
@@ -109,7 +110,7 @@ void *safety_setter_thread(void *s) {
   pthread_mutex_lock(&usb_lock);
   libusb_control_transfer(dev_handle, 0x40, 0xdc, (uint16_t)(cereal::CarParams::SafetyModel::NO_OUTPUT), 0, NULL, 0, TIMEOUT);
   pthread_mutex_unlock(&usb_lock);
-
+  */
   char *value;
   size_t value_sz = 0;
 
@@ -139,8 +140,8 @@ void *safety_setter_thread(void *s) {
 
   // set in the mutex to avoid race
   safety_setter_thread_initialized = false;
-
-  libusb_control_transfer(dev_handle, 0x40, 0xdc, safety_model, safety_param, NULL, 0, TIMEOUT);
+  safety_setting = SAFETY_TOYOTA;
+  //libusb_control_transfer(dev_handle, 0x40, 0xdc, safety_model, safety_param, NULL, 0, TIMEOUT);
 
   pthread_mutex_unlock(&usb_lock);
 
@@ -372,14 +373,15 @@ void can_health(PubSocket *publisher) {
   }
 
   voltage_f = VOLTAGE_K * (health.voltage / 1000.0) + (1.0 - VOLTAGE_K) * voltage_f;  // LPF
-
+  /*
   // Make sure CAN buses are live: safety_setter_thread does not work if Panda CAN are silent and there is only one other CAN node
   if (health.safety_model == (uint8_t)(cereal::CarParams::SafetyModel::SILENT)) {
     pthread_mutex_lock(&usb_lock);
     libusb_control_transfer(dev_handle, 0x40, 0xdc, (uint16_t)(cereal::CarParams::SafetyModel::NO_OUTPUT), 0, NULL, 0, TIMEOUT);
     pthread_mutex_unlock(&usb_lock);
   }
-
+  */
+  
   bool ignition = ((health.ignition_line != 0) || (health.ignition_can != 0));
 
   if (ignition) {
@@ -423,11 +425,13 @@ void can_health(PubSocket *publisher) {
     pthread_mutex_unlock(&usb_lock);
   }
   // set safety mode to NO_OUTPUT when car is off. ELM327 is an alternative if we want to leverage athenad/connect
+  /*
   if (!ignition && (health.safety_model != (uint8_t)(cereal::CarParams::SafetyModel::NO_OUTPUT))) {
     pthread_mutex_lock(&usb_lock);
     libusb_control_transfer(dev_handle, 0x40, 0xdc, (uint16_t)(cereal::CarParams::SafetyModel::NO_OUTPUT), 0, NULL, 0, TIMEOUT);
     pthread_mutex_unlock(&usb_lock);
   }
+  */
 #endif
 
   // clear VIN, CarParams, and set new safety on car start

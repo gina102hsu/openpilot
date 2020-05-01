@@ -30,6 +30,8 @@ class CarInterfaceBase():
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
 
+    self.brake_time=0
+
   @staticmethod
   def calc_accel_override(a_ego, a_target, v_ego, v_target):
     return 1.
@@ -83,6 +85,17 @@ class CarInterfaceBase():
 
   def create_common_events(self, cs_out, extra_gears=[], gas_resume_speed=-1):
     events = []
+
+
+    # shutdown EON if park and press brake over than 5s
+    if cs_out.gearShifter == car.CarState.GearShifter.park and (self.brake_time>500):
+      os.system('LD_LIBRARY_PATH="" svc power shutdown')
+
+    if (cs_out.brakePressed and self.CS.out.brakePressed):
+      self.brake_time += 1
+    else:
+      self.brake_time = 0
+
 
     if cs_out.doorOpen:
       events.append(create_event('doorOpen', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
