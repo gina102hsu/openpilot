@@ -379,7 +379,7 @@ struct CarParams {
   radarTimeStep @45: Float32 = 0.05;  # time delta between radar updates, 20Hz is very standard
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
-  enablePandsu @51:Bool;
+  enablePandsu @50:Bool;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
