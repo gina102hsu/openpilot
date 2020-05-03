@@ -159,6 +159,8 @@ typedef struct UIScene {
   float angleSteersDes;
   float angleSteers;
   float cputemp;
+  bool controlsAllowed;
+  int safetyModel;
 } UIScene;
 
 typedef struct {

@@ -488,6 +488,8 @@ void handle_message(UIState *s, Message * msg) {
     cereal_read_HealthData(&datad, eventd.health);
 
     s->scene.hwType = datad.hwType;
+    s->scene.safetyModel=datad.safetyModel;
+    s->scene.controlsAllowed=datad.controlsAllowed;
     s->hardware_timeout = 5*30; // 5 seconds at 30 fps
   }
   capn_free(&ctx);
