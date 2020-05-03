@@ -140,7 +140,7 @@ void *safety_setter_thread(void *s) {
 
   // set in the mutex to avoid race
   safety_setter_thread_initialized = false;
-  safety_setting = SAFETY_TOYOTA;
+  //safety_setting = SAFETY_TOYOTA;
   //libusb_control_transfer(dev_handle, 0x40, 0xdc, safety_model, safety_param, NULL, 0, TIMEOUT);
 
   pthread_mutex_unlock(&usb_lock);

@@ -466,7 +466,7 @@ void handle_message(UIState *s, Message * msg) {
     cereal_read_ThermalData(&datad, eventd.thermal);
 
     //add bb draw
-    s->scene.cputemp=datad.cpu0;
+    s->scene.cputemp=datad.cpu0/10;
     
     s->scene.networkType = datad.networkType;
     s->scene.networkStrength = datad.networkStrength;

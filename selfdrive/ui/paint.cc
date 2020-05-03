@@ -881,10 +881,11 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
           val_color = nvgRGBA(255, 0, 0, 200);
         }
 
-        snprintf(val_str, sizeof(val_str), "%d C", (int)(scene->cputemp * 3.6 + 0.5));
+        snprintf(val_str, sizeof(val_str), "%d C", (int)(scene->cputemp));
       } else {
          snprintf(val_str, sizeof(val_str), "-");
       }
+      snprintf(uom_str, sizeof(uom_str), "C");
       
       bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CPU TEMP",
           bb_rx, bb_ry, bb_uom_dx,
@@ -982,8 +983,8 @@ static void ui_draw_bbui(UIState *s) {
     const int bb_dmr_x = scene->ui_viz_rx + scene->ui_viz_rw - bb_dmr_w - (bdr_s * 2);
     const int bb_dmr_y = (box_y + (bdr_s * 1.5)) + 220;
 
-    bb_ui_draw_measures_right(s, bb_dml_x, bb_dml_y, bb_dml_w);
-    bb_ui_draw_measures_left(s, bb_dmr_x, bb_dmr_y, bb_dmr_w);
+    bb_ui_draw_measures_left(s, bb_dml_x, bb_dml_y, bb_dml_w);
+    bb_ui_draw_measures_right(s, bb_dmr_x, bb_dmr_y, bb_dmr_w);
 }
 
 //*******************draw mod end******************/
