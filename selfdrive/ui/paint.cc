@@ -902,7 +902,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       if (scene->controlsAllowed==0) {
           val_color = nvgRGBA(255, 0, 0, 200);
       } 
-     snprintf(val_str, sizeof(val_str), "control: %d", scene->controlsAllowed?1:0);
+     snprintf(uom_str, sizeof(uom_str), "control: %d", scene->controlsAllowed?1:0);
 
 /*
 silent @0;
@@ -931,15 +931,15 @@ subaruLegacy @22;  # pre-Global platform
 
 */
      if (scene->safetyModel==2)
-       snprintf(uom_str, sizeof(uom_str), "toyota");
+       snprintf(val_str, sizeof(val_str), "toyota");
      else if (scene->safetyModel==0)
-       snprintf(uom_str, sizeof(uom_str), "mock");
+       snprintf(val_str, sizeof(val_str), "mock");
      else if (scene->safetyModel==17)
-       snprintf(uom_str, sizeof(uom_str), "all output");
+       snprintf(val_str, sizeof(val_str), "all output");
      else if (scene->safetyModel==19)
-       snprintf(uom_str, sizeof(uom_str), "no output");
+       snprintf(val_str, sizeof(val_str), "no output");
      else
-       snprintf(uom_str, sizeof(uom_str), "other car"); 
+       snprintf(val_str, sizeof(val_str), "other car"); 
 
      bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CPU TEMP", bb_rx, bb_ry, bb_uom_dx, val_color, lab_color, uom_color, value_fontSize, label_fontSize, uom_fontSize );
       bb_ry = bb_y + bb_h;
