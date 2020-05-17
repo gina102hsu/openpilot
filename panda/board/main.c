@@ -722,7 +722,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
     #endif
 
     // check registers
-    check_registers();
+    //check_registers();
 
     // set ignition_can to false after 2s of no CAN seen
     if (ignition_can_cnt > 2U) {
@@ -735,7 +735,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
     ignition_can_cnt += 1U;
 
     // synchronous safety check
-    safety_tick(current_hooks);
+    //safety_tick(current_hooks);
   }
   TIM9->SR = 0;
 }

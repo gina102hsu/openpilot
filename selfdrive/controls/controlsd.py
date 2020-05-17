@@ -471,16 +471,15 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
   read_only = not car_recognized or not controller_available or CP.dashcamOnly or community_feature_disallowed
   if read_only:
     CP.safetyModel = car.CarParams.SafetyModel.noOutput
-
   # Write CarParams for radard and boardd safety mode
   cp_bytes = CP.to_bytes()
   params.put("CarParams", cp_bytes)
   params.put("CarParamsCache", cp_bytes)
   params.put("LongitudinalControl", "1" if CP.openpilotLongitudinalControl else "0")
 
+
   CC = car.CarControl.new_message()
   AM = AlertManager()
-
   startup_alert = get_startup_alert(car_recognized, controller_available)
   AM.add(sm.frame, startup_alert, False)
 
@@ -517,14 +516,13 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
   # controlsd is driven by can recv, expected at 100Hz
   rk = Ratekeeper(100, print_delay_threshold=None)
 
-  internet_needed = params.get("Offroad_ConnectivityNeeded", encoding='utf8') is not None
+  #internet_needed = params.get("Offroad_ConnectivityNeeded", encoding='utf8') is not None
 
   prof = Profiler(False)  # off by default
 
   while True:
     start_time = sec_since_boot()
     prof.checkpoint("Ratekeeper", ignore=True)
-
     # Sample data and compute car events
     CS, events, cal_perc, mismatch_counter, can_error_counter = data_sample(CI, CC, sm, can_sock, state, mismatch_counter, can_error_counter, params)
     prof.checkpoint("Sample")
@@ -550,8 +548,8 @@ def controlsd_thread(sm=None, pm=None, can_sock=None):
       events.append(create_event('canError', [ET.NO_ENTRY, ET.IMMEDIATE_DISABLE]))
     if not sounds_available:
       events.append(create_event('soundsUnavailable', [ET.NO_ENTRY, ET.PERMANENT]))
-    if internet_needed:
-      events.append(create_event('internetConnectivityNeeded', [ET.NO_ENTRY, ET.PERMANENT]))
+    #if internet_needed:
+    #  events.append(create_event('internetConnectivityNeeded', [ET.NO_ENTRY, ET.PERMANENT]))
     if community_feature_disallowed:
       events.append(create_event('communityFeatureDisallowed', [ET.PERMANENT]))
     if read_only and not passive:

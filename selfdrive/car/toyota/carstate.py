@@ -100,7 +100,6 @@ class CarState(CarStateBase):
     # 2 is standby, 10 is active. TODO: check that everything else is really a faulty state
     self.steer_state = cp.vl["EPS_STATUS"]['LKA_STATE']
     self.steer_warning = cp.vl["EPS_STATUS"]['LKA_STATE'] not in [1, 5]
-
     return ret
 
   @staticmethod
