@@ -331,7 +331,7 @@ def main():
     fcntl.flock(ov_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
   except IOError:
     raise RuntimeError("couldn't get overlay lock; is another updated running?")
-
+  """
   while True:
     update_failed_count += 1
     time_wrong = datetime.datetime.utcnow().year < 2019
@@ -376,7 +376,7 @@ def main():
     wait_between_updates(wait_helper.ready_event)
     if wait_helper.shutdown:
       break
-
+  """
   # We've been signaled to shut down
   dismount_ovfs()
 

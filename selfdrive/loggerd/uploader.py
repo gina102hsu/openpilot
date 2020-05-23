@@ -81,6 +81,7 @@ def is_on_wifi():
     return False
 
 def is_on_hotspot():
+  """
   try:
     result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
     result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
@@ -92,7 +93,8 @@ def is_on_hotspot():
     return (is_android or is_ios or is_entune)
   except Exception:
     return False
-
+  """
+  return False
 class Uploader():
   def __init__(self, dongle_id, root):
     self.dongle_id = dongle_id

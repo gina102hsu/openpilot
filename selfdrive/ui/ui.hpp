@@ -159,7 +159,15 @@ typedef struct UIScene {
   int paTemp;
   cereal::HealthData::HwType hwType;
   int satelliteCount;
+
   uint8_t athenaStatus;
+  //bb draw
+  float angleSteersDes;
+  float angleSteers;
+  float cputemp;
+  bool controlsAllowed;
+  int safetyModel;
+
 } UIScene;
 
 typedef struct {

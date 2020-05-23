@@ -106,7 +106,7 @@ def fingerprint(logcan, sendcan, has_relay):
   frame_fingerprint = 10  # 0.1s
   car_fingerprint = None
   done = False
-
+  """
   while not done:
     a = messaging.get_one_can(logcan)
 
@@ -140,9 +140,14 @@ def fingerprint(logcan, sendcan, has_relay):
     done = failed or succeeded
 
     frame += 1
-
+  """
   source = car.CarParams.FingerprintSource.can
+  car_fingerprint = 'TOYOTA PRIUS 2017'
+  #finger = {643: 7, 810: 2, 870: 7, 836: 8, 1568: 8, 36: 8, 37: 8, 166: 8, 295: 8, 296: 8, 170: 8, 560: 7, 562: 6, 180: 8, 1077: 8, 951: 8, 1467: 8, 829: 2, 800: 8, 452: 8, 581: 5, 713: 8, 971: 7, 845: 5, 974: 8, 975: 5, 466: 8, 467: 8, 863: 8, 608: 8, 610: 8, 550: 8, 742: 8, 743: 8, 1132: 8, 1005: 2, 552: 4, 1020: 8, 426: 6}
+  finger = [{0:{1467: 8}}]  # for pandsu
+  #finger = [{0:{643: 7}}]   for no pandsu
 
+  """
   # If FW query returns exactly 1 candidate, use it
   if len(fw_candidates) == 1:
     car_fingerprint = list(fw_candidates)[0]
@@ -151,20 +156,31 @@ def fingerprint(logcan, sendcan, has_relay):
   if fixed_fingerprint:
     car_fingerprint = fixed_fingerprint
     source = car.CarParams.FingerprintSource.fixed
-
+  """
   cloudlog.warning("fingerprinted %s", car_fingerprint)
   return car_fingerprint, finger, vin, car_fw, source
 
 
 def get_car(logcan, sendcan, has_relay=False):
-  candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan, has_relay)
-
+  #candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan, has_relay)
+  #fingerprints = {0:{643: 7}}
+  fingerprints = {0:{1467: 8}}
+  vin = VIN_UNKNOWN
+  car_fw = []
+  has_relay=False
+  candidate = "TOYOTA PRIUS 2017"
+  source = car.CarParams.FingerprintSource.can
+  cloudlog.warning("VIN %s", vin)
+  Params().put("CarVin", vin)
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
     candidate = "mock"
 
+  cloudlog.warning("fingerprints: %r", fingerprints)
   CarInterface, CarController, CarState = interfaces[candidate]
+  cloudlog.warning("set interface done")
   car_params = CarInterface.get_params(candidate, fingerprints, has_relay, car_fw)
+  cloudlog.warning("params: %r", car_params)
   car_params.carVin = vin
   car_params.carFw = car_fw
   car_params.fingerprintSource = source

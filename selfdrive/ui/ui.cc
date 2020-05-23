@@ -387,6 +387,7 @@ void handle_message(UIState *s,  Message* msg) {
     if (data.getVCruise() != scene.v_cruise) {
       scene.v_cruise_update_ts = event.getLogMonoTime();
     }
+
     scene.v_cruise = data.getVCruise();
     scene.v_ego = data.getVEgo();
     scene.curvature = data.getCurvature();
@@ -396,6 +397,11 @@ void handle_message(UIState *s,  Message* msg) {
     scene.monitoring_active = data.getDriverMonitoringOn();
 
     scene.decel_for_model = data.getDecelForModel();
+
+    // add bb draw info
+    scene.angleSteers = datad.angleSteers;
+    scene.angleSteersDes = datad.angleSteersDes;
+    
     auto alert_sound = data.getAlertSound();
     const auto sound_none = cereal::CarControl::HUDControl::AudibleAlert::NONE;
     if (alert_sound != s->alert_sound){
@@ -480,6 +486,7 @@ void handle_message(UIState *s,  Message* msg) {
     if (data.getMockEngaged() != scene.uilayout_mockengaged) {
       scene.uilayout_mockengaged = data.getMockEngaged();
     }
+
   } else if (which == cereal::Event::LIVE_MAP_DATA) {
     scene.map_valid = event.getLiveMapData().getMapValid();
   } else if (which == cereal::Event::THERMAL) {
@@ -501,6 +508,8 @@ void handle_message(UIState *s,  Message* msg) {
     }
   } else if (which == cereal::Event::HEALTH) {
     scene.hwType = event.getHealth().getHwType();
+    scene.safetyModel=datad.safetyModel;
+    scene.controlsAllowed=datad.controlsAllowed;
     s->hardware_timeout = 5*30; // 5 seconds at 30 fps
   } else if (which == cereal::Event::DRIVER_STATE) {
     auto data = event.getDriverState();

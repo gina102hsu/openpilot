@@ -32,7 +32,7 @@ const int TOYOTA_GAS_INTERCEPTOR_THRSLD = 845;
 const AddrBus TOYOTA_TX_MSGS[] = {{0x283, 0}, {0x2E6, 0}, {0x2E7, 0}, {0x33E, 0}, {0x344, 0}, {0x365, 0}, {0x366, 0}, {0x4CB, 0},  // DSU bus 0
                                   {0x128, 1}, {0x141, 1}, {0x160, 1}, {0x161, 1}, {0x470, 1},  // DSU bus 1
                                   {0x2E4, 0}, {0x411, 0}, {0x412, 0}, {0x343, 0}, {0x1D2, 0},  // LKAS + ACC
-                                  {0x200, 0}, {0x750, 0}};  // interceptor + Blindspot monitor
+                                  {0x200, 0}, {0x750, 0}, {0x5AA, 0}};  // interceptor + Blindspot monitor
 
 AddrCheckStruct toyota_rx_checks[] = {
   {.addr = { 0xaa}, .bus = 0, .check_checksum = false, .expected_timestep = 12000U},
@@ -44,6 +44,12 @@ const int TOYOTA_RX_CHECKS_LEN = sizeof(toyota_rx_checks) / sizeof(toyota_rx_che
 
 // global actuation limit states
 int toyota_dbc_eps_torque_factor = 100;   // conversion factor for STEER_TORQUE_EPS in %: see dbc file
+
+
+
+int stop_forward_steer = 0;
+uint32_t eon_tmr = 0;
+
 
 static uint8_t toyota_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
@@ -140,9 +146,11 @@ static int toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     // 0x2E4 is lkas cmd. If it is on bus 0, then relay is unexpectedly closed
-    if ((safety_mode_cnt > RELAY_TRNS_TIMEOUT) && (addr == 0x2E4)) {
-      relay_malfunction_set();
-    }
+
+    //if ((safety_mode_cnt > RELAY_TRNS_TIMEOUT) && (addr == 0x2E4)) {
+    //  relay_malfunction = true;
+    //}
+
   }
   return valid;
 }
@@ -191,6 +199,16 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
       }
     }
 
+    if (addr == 0x5aa)
+    {
+       stop_forward_steer = 1;
+       eon_tmr=TIM2->CNT;
+    }
+    uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
+    if (eon_elapsed>1200000) //if no eon signal more than 1.2s
+    {   
+       stop_forward_steer = 0;
+    }
     // STEER: safety check on bytes 2-3
     if (addr == 0x2E4) {
       int desired_torque = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
@@ -261,7 +279,9 @@ static int toyota_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
       int addr = GET_ADDR(to_fwd);
       // block stock lkas messages and stock acc messages (if OP is doing ACC)
       // in TSS2, 0x191 is LTA which we need to block to avoid controls collision
-      int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
+      int is_lkas_msg = ((addr == 0x2E4) /*|| (addr == 0x412)*/ || (addr == 0x191));
+      if (stop_forward_steer==0)
+        is_lkas_msg=0;
       // in TSS2 the camera does ACC as well, so filter 0x343
       int is_acc_msg = (addr == 0x343);
       int block_msg = is_lkas_msg || is_acc_msg;

@@ -58,11 +58,13 @@ STATIC_MSGS = [
   (0x470, Ecu.dsu, (CAR.PRIUS, CAR.LEXUS_RXH), 1, 100, b'\x00\x00\x02\x7a'),
   (0x470, Ecu.dsu, (CAR.HIGHLANDER, CAR.HIGHLANDERH, CAR.RAV4H, CAR.SIENNA, CAR.LEXUS_CTH), 1,  100, b'\x00\x00\x01\x79'),
   (0x4CB, Ecu.dsu, (CAR.PRIUS, CAR.RAV4H, CAR.LEXUS_RXH, CAR.LEXUS_NXH, CAR.RAV4, CAR.COROLLA, CAR.HIGHLANDERH, CAR.HIGHLANDER, CAR.AVALON, CAR.SIENNA, CAR.LEXUS_CTH, CAR.LEXUS_RX), 0, 100, b'\x0c\x00\x00\x00\x00\x00\x00\x00'),
+  (0x5AA, Ecu.eon, (CAR.PRIUS, CAR.RAV4H, CAR.LEXUS_RXH, CAR.RAV4), 0, 100, b'\x0c\x00\x00\x00\x00\x00\x00\x00'),
 ]
 
 ECU_FINGERPRINT = {
   Ecu.fwdCamera: [0x2e4],   # steer torque cmd
   Ecu.dsu: [0x283],   # accel cmd
+  Ecu.pandsu: [0x5BB], # dsu panda alive
 }
 
 
