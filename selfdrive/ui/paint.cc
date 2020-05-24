@@ -831,13 +831,13 @@ volkswagenPq @21;
 subaruLegacy @22;  # pre-Global platform
 
 */
-     if (scene->safetyModel==2)
+     if ((int)(scene->safetyModel)==2)
        snprintf(val_str, sizeof(val_str), "toyota");
-     else if (scene->safetyModel==0)
+     else if ((int)(scene->safetyModel)==0)
        snprintf(val_str, sizeof(val_str), "mock");
-     else if (scene->safetyModel==17)
+     else if ((int)(scene->safetyModel)==17)
        snprintf(val_str, sizeof(val_str), "all output");
-     else if (scene->safetyModel==19)
+     else if ((int)(scene->safetyModel)==19)
        snprintf(val_str, sizeof(val_str), "no output");
      else
        snprintf(val_str, sizeof(val_str), "other car"); 

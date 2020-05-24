@@ -166,7 +166,7 @@ typedef struct UIScene {
   float angleSteers;
   float cputemp;
   bool controlsAllowed;
-  int safetyModel;
+  cereal::CarParams::SafetyModel safetyModel;
 
 } UIScene;
 

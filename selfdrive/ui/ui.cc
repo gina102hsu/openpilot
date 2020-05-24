@@ -399,8 +399,8 @@ void handle_message(UIState *s,  Message* msg) {
     scene.decel_for_model = data.getDecelForModel();
 
     // add bb draw info
-    scene.angleSteers = datad.angleSteers;
-    scene.angleSteersDes = datad.angleSteersDes;
+    scene.angleSteers = data.getAngleSteers();
+    scene.angleSteersDes = data.getAngleSteersDes();
     
     auto alert_sound = data.getAlertSound();
     const auto sound_none = cereal::CarControl::HUDControl::AudibleAlert::NONE;
@@ -508,8 +508,8 @@ void handle_message(UIState *s,  Message* msg) {
     }
   } else if (which == cereal::Event::HEALTH) {
     scene.hwType = event.getHealth().getHwType();
-    scene.safetyModel=datad.safetyModel;
-    scene.controlsAllowed=datad.controlsAllowed;
+    scene.safetyModel=event.getHealth().getSafetyModel();
+    scene.controlsAllowed=event.getHealth().getControlsAllowed();
     s->hardware_timeout = 5*30; // 5 seconds at 30 fps
   } else if (which == cereal::Event::DRIVER_STATE) {
     auto data = event.getDriverState();
