@@ -188,6 +188,7 @@ managed_processes = {
   "dmonitoringmodeld": ("selfdrive/modeld", ["./dmonitoringmodeld"]),
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "driverview": "selfdrive.controls.lib.driverview",
+  "appd": "selfdrive.appd",
 }
 
 daemon_processes = {
@@ -222,6 +223,7 @@ if ANDROID:
     'logcatd',
     'tombstoned',
     'updated',
+    'appd',
   ]
 
 car_started_processes = [
