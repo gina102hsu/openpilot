@@ -205,7 +205,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
        eon_tmr=TIM2->CNT;
     }
     uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
-    if (eon_elapsed>1200000) //if no eon signal more than 1.2s
+    if (eon_elapsed>500000) //if no eon signal more than 500ms
     {   
        stop_forward_steer = 0;
     }

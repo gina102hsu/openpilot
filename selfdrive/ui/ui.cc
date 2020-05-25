@@ -491,7 +491,10 @@ void handle_message(UIState *s,  Message* msg) {
     scene.map_valid = event.getLiveMapData().getMapValid();
   } else if (which == cereal::Event::THERMAL) {
     auto data = event.getThermal();
-
+    
+    //add bb draw
+    s->scene.cputemp=data.getCpu0()/10;
+        
     scene.networkType = data.getNetworkType();
     scene.networkStrength = data.getNetworkStrength();
     scene.batteryPercent = data.getBatteryPercent();
