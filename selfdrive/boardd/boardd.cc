@@ -415,6 +415,7 @@ void can_health(PubSocket *publisher) {
   }
 
 #ifndef __x86_64__
+  
   bool cdp_mode = health.usb_power_mode == (uint8_t)(cereal::HealthData::UsbPowerMode::CDP);
   bool no_ignition_exp = no_ignition_cnt > NO_IGNITION_CNT_MAX;
   if ((no_ignition_exp || (voltage_f < VBATT_PAUSE_CHARGING)) && cdp_mode && !ignition) {
@@ -431,13 +432,13 @@ void can_health(PubSocket *publisher) {
     }
     if (disable_power_down) free(disable_power_down);
   }
+  /*
   if (!no_ignition_exp && (voltage_f > VBATT_START_CHARGING) && !cdp_mode) {
     printf("TURN ON CHARGING!\n");
     pthread_mutex_lock(&usb_lock);
     libusb_control_transfer(dev_handle, 0xc0, 0xe6, (uint16_t)(cereal::HealthData::UsbPowerMode::CDP), 0, NULL, 0, TIMEOUT);
     pthread_mutex_unlock(&usb_lock);
   }
-  /*
   // set power save state enabled when car is off and viceversa when it's on
   if (ignition && (health.power_save_enabled == 1)) {
     pthread_mutex_lock(&usb_lock);

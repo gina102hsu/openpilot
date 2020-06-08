@@ -48,6 +48,7 @@ int toyota_dbc_eps_torque_factor = 100;   // conversion factor for STEER_TORQUE_
 
 
 int stop_forward_steer = 0;
+int eon_counter = 0;
 uint32_t eon_tmr = 0;
 
 
@@ -201,14 +202,24 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
     if (addr == 0x5aa)
     {
-       stop_forward_steer = 1;
+       if (stop_forward_steer==0)
+       {
+          eon_counter++;
+          if (eon_counter>20)   // 20*50ms, 1s. prevent switch between stock and eon too freqently 
+          {
+             stop_forward_steer = 1;
+          }
+       }
        eon_tmr=TIM2->CNT;
+
     }
     uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
-    if (eon_elapsed>1200000) //if no eon signal more than 1200ms
+    if (eon_elapsed>500000) //if no eon signal more than 300ms
     {   
        stop_forward_steer = 0;
+       eon_counter=0;
     }
+    
     // STEER: safety check on bytes 2-3
     if (addr == 0x2E4) {
       int desired_torque = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
@@ -254,6 +265,14 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
       if (violation) {
         tx = 0;
+      }
+    }
+
+    if ((addr == 0x2E4) || (addr == 0x343))
+    {
+      if (stop_forward_steer==0)   // eon not ready, panda is proxying camera's data
+      {
+        tx=0;
       }
     }
   }
