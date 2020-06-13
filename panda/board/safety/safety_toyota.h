@@ -119,6 +119,7 @@ static int toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       int cruise_enabled = GET_BYTE(to_push, 1) & 0x80;
 
       if (cruise_enabled)
+      {  
         controls_allowed = 1;
       }
     }
