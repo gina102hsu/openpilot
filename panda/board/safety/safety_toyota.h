@@ -113,6 +113,17 @@ static int toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       gas_pressed_prev = gas_pressed;
     }
 
+
+    if (addr == 0x1D3) {
+      // 7th bit is Main_ON
+      int cruise_enabled = GET_BYTE(to_push, 1) & 0x80;
+
+      if (cruise_enabled)
+        controls_allowed = 1;
+      }
+    }
+
+
     // sample speed
     if (addr == 0xaa) {
       int speed = 0;
@@ -151,7 +162,15 @@ static int toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     //if ((safety_mode_cnt > RELAY_TRNS_TIMEOUT) && (addr == 0x2E4)) {
     //  relay_malfunction = true;
     //}
-
+    if (stop_forward_steer)
+    {
+        uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
+        if (eon_elapsed>500000) //if no eon signal more than 300ms
+        {   
+           stop_forward_steer = 0;
+           eon_counter=0;
+        }
+    }
   }
   return valid;
 }
@@ -213,12 +232,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
        eon_tmr=TIM2->CNT;
 
     }
-    uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
-    if (eon_elapsed>500000) //if no eon signal more than 300ms
-    {   
-       stop_forward_steer = 0;
-       eon_counter=0;
-    }
+
     
     // STEER: safety check on bytes 2-3
     if (addr == 0x2E4) {

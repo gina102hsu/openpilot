@@ -76,8 +76,14 @@ class CarController():
     if CS.steer_state in [9, 25]:
       self.last_fault_frame = frame
 
+    #doff enable LKA when cruise is enabled
+    enableLKA = False
+    if CS.cruiseState.available and not CS.seatbeltUnlatched and not CS.doorOpen:
+      if CS.gearShifter == car.CarState.GearShifter.drive:
+        enableLKA = True
+
     # Cut steering for 2s after fault
-    if not enabled or (frame - self.last_fault_frame < 200):
+    if not (enabled or enableLKA) or (frame - self.last_fault_frame < 200):
       apply_steer = 0
       apply_steer_req = 0
     else:
