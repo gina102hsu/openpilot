@@ -78,8 +78,8 @@ class CarController():
 
     #doff enable LKA when cruise is enabled
     enableLKA = False
-    if CS.cruiseState.available and not CS.seatbeltUnlatched and not CS.doorOpen:
-      if CS.gearShifter == car.CarState.GearShifter.drive:
+    if CS.out.cruiseState.available and not CS.out.seatbeltUnlatched and not CS.out.doorOpen:
+      if CS.out.gearShifter == car.CarState.GearShifter.drive:
         enableLKA = True
 
     # Cut steering for 2s after fault
