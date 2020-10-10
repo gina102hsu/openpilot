@@ -168,7 +168,7 @@ def get_car(logcan, sendcan, has_relay=False):
   vin = VIN_UNKNOWN
   car_fw = []
   has_relay=False
-  candidate = "TOYOTA PRIUS 2017"
+  candidate = "TOYOTA RAV4 HYBRID 2019"
   source = car.CarParams.FingerprintSource.can
   cloudlog.warning("VIN %s", vin)
   Params().put("CarVin", vin)
