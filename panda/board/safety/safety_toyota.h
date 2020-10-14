@@ -330,7 +330,7 @@ static int toyota_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
       // block stock lkas messages and stock acc messages (if OP is doing ACC)
       // in TSS2, 0x191 is LTA which we need to block to avoid controls collision
       //int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
-      int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) /*|| (addr == 0x191)*/);
+      int is_lkas_msg = ((addr == 0x2E4) /*|| (addr == 0x412) || (addr == 0x191)*/);
       if (stop_forward_steer==0)
         is_lkas_msg=0;
       
