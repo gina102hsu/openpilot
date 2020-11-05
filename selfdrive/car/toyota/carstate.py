@@ -69,11 +69,12 @@ class CarState(CarStateBase):
     else:
       ret.steeringAngle = cp.vl["STEER_ANGLE_SENSOR"]['STEER_ANGLE'] + cp.vl["STEER_ANGLE_SENSOR"]['STEER_FRACTION']
     
-    if self.CP.hasZss and (self.angle_offset!=0):
+    if self.CP.hasZss and (self.needs_angle_offset == False):
       angle_wheel = cp.vl["STEER_ANGLE_SENSOR"]['STEER_ANGLE'] + cp.vl["STEER_ANGLE_SENSOR"]['STEER_FRACTION']
       angle_offset_current= ret.steeringAngle - angle_wheel
-      if abs(angle_offset_current-angle_offset) > 1:
+      if abs(angle_offset_current) > 8: # prevent zss crash
         self.CP.hasZss=False
+        ret.steeringAngle = cp.vl["STEER_ANGLE_SENSOR"]['STEER_ANGLE'] + cp.vl["STEER_ANGLE_SENSOR"]['STEER_FRACTION']
 
     ret.steeringRate = cp.vl["STEER_ANGLE_SENSOR"]['STEER_RATE']
     can_gear = int(cp.vl["GEAR_PACKET"]['GEAR'])
