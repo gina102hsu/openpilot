@@ -141,7 +141,10 @@ void update_sockets(UIState *s) {
     } else{
       s->status = scene.controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
     }
-
+    // add bb draw info
+    scene.angleSteers = scene.controls_state.getAngleSteers();
+    scene.angleSteersDes = scene.controls_state.getAngleSteersDes();
+    
     float alert_blinkingrate = scene.controls_state.getAlertBlinkingRate();
     if (alert_blinkingrate > 0.) {
       if (s->alert_blinked) {
@@ -198,6 +201,8 @@ void update_sockets(UIState *s) {
   }
   if (sm.updated("thermal")) {
     scene.thermal = sm["thermal"].getThermal();
+    //add bb draw
+    s->scene.cputemp=scene.thermal.getCpu0()/10;
   }
   if (sm.updated("ubloxGnss")) {
     auto data = sm["ubloxGnss"].getUbloxGnss();
@@ -209,7 +214,10 @@ void update_sockets(UIState *s) {
     auto health = sm["health"].getHealth();
     scene.hwType = health.getHwType();
     s->ignition = health.getIgnitionLine() || health.getIgnitionCan();
-  } else if ((s->sm->frame - s->sm->rcv_frame("health")) > 5*UI_FREQ) {
+    scene.safetyModel=health.getSafetyModel();
+    scene.controlsAllowed=health.getControlsAllowed();
+  } 
+  else if ((s->sm->frame - s->sm->rcv_frame("health")) > 5*UI_FREQ) {
     scene.hwType = cereal::HealthData::HwType::UNKNOWN;
   }
   if (sm.updated("carParams")) {

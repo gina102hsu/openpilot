@@ -22,8 +22,9 @@ class CarInterface(CarInterfaceBase):
 
     ret.steerActuatorDelay = 0.12  # Default delay, Prius has larger delay
     ret.steerLimitTimer = 0.4
+    ret.hasZss = True
 
-    if candidate not in [CAR.PRIUS, CAR.RAV4, CAR.RAV4H]:  # These cars use LQR/INDI
+    if (candidate not in [CAR.PRIUS, CAR.RAV4, CAR.RAV4H]) or ret.hasZss:  # These cars use LQR/INDI
       ret.lateralTuning.init('pid')
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
 
@@ -34,13 +35,20 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 15.74   # unknown end-to-end spec
       tire_stiffness_factor = 0.6371   # hand-tune
       ret.mass = 3045. * CV.LB_TO_KG + STD_CARGO_KG
-
-      ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 4.0
-      ret.lateralTuning.indi.outerLoopGain = 3.0
-      ret.lateralTuning.indi.timeConstant = 1.0
-      ret.lateralTuning.indi.actuatorEffectiveness = 1.0
-      ret.steerActuatorDelay = 0.5
+      if ret.hasZss:
+        ret.safetyParam = 73
+        ret.wheelbase = 2.70002 #from toyota online sepc.
+        ret.steerRatio = 13.4   # True steerRation from older prius
+        ret.mass = 3115. * CV.LB_TO_KG + STD_CARGO_KG
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.35], [0.15]]
+        ret.lateralTuning.pid.kf = 0.00007818594
+      else:
+        ret.lateralTuning.init('indi')
+        ret.lateralTuning.indi.innerLoopGain = 4.0
+        ret.lateralTuning.indi.outerLoopGain = 3.0
+        ret.lateralTuning.indi.timeConstant = 0.1 if ret.hasZss else 1.0
+        ret.lateralTuning.indi.actuatorEffectiveness = 1.0
+        ret.steerActuatorDelay = 0.5
 
     elif candidate in [CAR.RAV4, CAR.RAV4H]:
       stop_and_go = True if (candidate in CAR.RAV4H) else False
@@ -281,8 +289,13 @@ class CarInterface(CarInterfaceBase):
     # In TSS2 cars the camera does long control
     ret.enableDsu = is_ecu_disconnected(fingerprint[0], FINGERPRINTS, ECU_FINGERPRINT, candidate, Ecu.dsu) and candidate not in TSS2_CAR
     ret.enableGasInterceptor = 0x201 in fingerprint[0]
+    
+    ret.enablePandsu = 0x5BB in fingerprint[0]
+    if ret.enablePandsu:
+      ret.enableDsu=False
+    
     # if the smartDSU is detected, openpilot can send ACC_CMD (and the smartDSU will block it from the DSU) or not (the DSU is "connected")
-    ret.openpilotLongitudinalControl = ret.enableCamera and (smartDsu or ret.enableDsu or candidate in TSS2_CAR)
+    ret.openpilotLongitudinalControl = ret.enableCamera and (smartDsu or ret.enablePandsu or ret.enableDsu or candidate in TSS2_CAR)
     cloudlog.warning("ECU Camera Simulated: %r", ret.enableCamera)
     cloudlog.warning("ECU DSU Simulated: %r", ret.enableDsu)
     cloudlog.warning("ECU Gas Interceptor: %r", ret.enableGasInterceptor)
@@ -293,7 +306,7 @@ class CarInterface(CarInterfaceBase):
 
     # removing the DSU disables AEB and it's considered a community maintained feature
     # intercepting the DSU is a community feature since it requires unofficial hardware
-    ret.communityFeature = ret.enableGasInterceptor or ret.enableDsu or smartDsu
+    ret.communityFeature = ret.enableGasInterceptor or ret.enableDsu or smartDsu or ret.enablePandsu
 
     ret.longitudinalTuning.deadzoneBP = [0., 9.]
     ret.longitudinalTuning.deadzoneV = [0., .15]

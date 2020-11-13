@@ -300,11 +300,11 @@ int usb_cb_control_msg(USB_Setup_TypeDef *setup, uint8_t *resp, bool hardwired) 
       break;
     // **** 0xb0: set IR power
     case 0xb0:
-      current_board->set_ir_power(setup->b.wValue.w);
+      //current_board->set_ir_power(setup->b.wValue.w);
       break;
     // **** 0xb1: set fan power
     case 0xb1:
-      current_board->set_fan_power(setup->b.wValue.w);
+      //current_board->set_fan_power(setup->b.wValue.w);
       break;
     // **** 0xb2: get fan rpm
     case 0xb2:
@@ -326,7 +326,7 @@ int usb_cb_control_msg(USB_Setup_TypeDef *setup, uint8_t *resp, bool hardwired) 
       break;
     // **** 0xc1: get hardware type
     case 0xc1:
-      resp[0] = hw_type;
+      resp[0] = HW_TYPE_BLACK_PANDA;//hw_type;
       resp_len = 1;
       break;
     // **** 0xd0: fetch serial number
@@ -719,12 +719,13 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         puts("EON hasn't sent a heartbeat for 0x");
         puth(heartbeat_counter);
         puts(" seconds. Safety is set to SILENT mode.\n");
+        /*
         if (current_safety_mode != SAFETY_SILENT) {
           set_safety_mode(SAFETY_SILENT, 0U);
         }
         if (power_save_status != POWER_SAVE_STATUS_ENABLED) {
           set_power_save_state(POWER_SAVE_STATUS_ENABLED);
-        }
+        }*/
 
         // Also disable IR when the heartbeat goes missing
         current_board->set_ir_power(0U);
@@ -744,7 +745,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
       #endif
 
       // check registers
-      check_registers();
+      //check_registers();
 
       // set ignition_can to false after 2s of no CAN seen
       if (ignition_can_cnt > 2U) {
@@ -757,7 +758,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
       ignition_can_cnt += 1U;
 
       // synchronous safety check
-      safety_tick(current_hooks);
+      //safety_tick(current_hooks);
     }
 
     loop_counter++;
@@ -834,7 +835,8 @@ int main(void) {
   // use TIM2->CNT to read
 
   // init to SILENT and can silent
-  set_safety_mode(SAFETY_SILENT, 0);
+  //set_safety_mode(SAFETY_SILENT, 0);
+  set_safety_mode(SAFETY_TOYOTA, 66)
 
   // enable CAN TXs
   current_board->enable_can_transceivers(true);

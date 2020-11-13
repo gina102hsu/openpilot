@@ -118,7 +118,7 @@ def fingerprint(logcan, sendcan):
   frame_fingerprint = 10  # 0.1s
   car_fingerprint = None
   done = False
-
+  """
   while not done:
     a = get_one_can(logcan)
 
@@ -151,9 +151,12 @@ def fingerprint(logcan, sendcan):
     done = failed or succeeded
 
     frame += 1
-
+  """
   source = car.CarParams.FingerprintSource.can
-
+  car_fingerprint = 'TOYOTA PRIUS 2017'
+  finger = [{0:{1467: 8}}]  # for pandsu
+  #finger = [{0:{643: 7}}]   for no pandsu
+  """
   # If FW query returns exactly 1 candidate, use it
   if len(fw_candidates) == 1:
     car_fingerprint = list(fw_candidates)[0]
@@ -162,13 +165,22 @@ def fingerprint(logcan, sendcan):
   if fixed_fingerprint:
     car_fingerprint = fixed_fingerprint
     source = car.CarParams.FingerprintSource.fixed
-
+  """
   cloudlog.warning("fingerprinted %s", car_fingerprint)
   return car_fingerprint, finger, vin, car_fw, source
 
 
 def get_car(logcan, sendcan):
-  candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan)
+  #candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan)
+  #fingerprints = {0:{643: 7}}
+  fingerprints = {0:{1467: 8}}
+  vin = VIN_UNKNOWN
+  car_fw = []
+  has_relay=False
+  candidate = "TOYOTA PRIUS 2017"
+  source = car.CarParams.FingerprintSource.can
+  cloudlog.warning("VIN %s", vin)
+  Params().put("CarVin", vin)
 
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)

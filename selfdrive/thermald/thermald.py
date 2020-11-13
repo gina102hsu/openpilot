@@ -310,6 +310,8 @@ def thermald_thread():
 
     # show invalid date/time alert
     startup_conditions["time_valid"] = now.year >= 2019
+    
+    """
     set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]))
 
     # Show update prompt
@@ -345,12 +347,14 @@ def thermald_thread():
       set_offroad_alert_if_changed("Offroad_UpdateFailed", False)
       set_offroad_alert_if_changed("Offroad_ConnectivityNeeded", False)
       set_offroad_alert_if_changed("Offroad_ConnectivityNeededPrompt", False)
-
+    """
+    
+    
     startup_conditions["not_uninstalling"] = not params.get("DoUninstall") == b"1"
     startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
 
     panda_signature = params.get("PandaFirmware")
-    startup_conditions["fw_version_match"] = (panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
+    startup_conditions["fw_version_match"] = True#(panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
     set_offroad_alert_if_changed("Offroad_PandaFirmwareMismatch", (not startup_conditions["fw_version_match"]))
 
     # with 2% left, we killall, otherwise the phone will take a long time to boot

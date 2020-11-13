@@ -32,7 +32,7 @@ const int TOYOTA_GAS_INTERCEPTOR_THRSLD = 845;
 const CanMsg TOYOTA_TX_MSGS[] = {{0x283, 0, 7}, {0x2E6, 0, 8}, {0x2E7, 0, 8}, {0x33E, 0, 7}, {0x344, 0, 8}, {0x365, 0, 7}, {0x366, 0, 7}, {0x4CB, 0, 8},  // DSU bus 0
                                   {0x128, 1, 6}, {0x141, 1, 4}, {0x160, 1, 8}, {0x161, 1, 7}, {0x470, 1, 4},  // DSU bus 1
                                   {0x2E4, 0, 5}, {0x411, 0, 8}, {0x412, 0, 8}, {0x343, 0, 8}, {0x1D2, 0, 8},  // LKAS + ACC
-                                  {0x200, 0, 6}};  // interceptor
+                                  {0x200, 0, 6}, {0x5AA, 0, 8}};  // interceptor
 
 AddrCheckStruct toyota_rx_checks[] = {
   {.msg = {{ 0xaa, 0, 8, .check_checksum = false, .expected_timestep = 12000U}}},
@@ -45,6 +45,10 @@ const int TOYOTA_RX_CHECKS_LEN = sizeof(toyota_rx_checks) / sizeof(toyota_rx_che
 
 // global actuation limit states
 int toyota_dbc_eps_torque_factor = 100;   // conversion factor for STEER_TORQUE_EPS in %: see dbc file
+
+int stop_forward_steer = 0;
+int eon_counter = 0;
+uint32_t eon_tmr = 0;
 
 static uint8_t toyota_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
@@ -132,6 +136,16 @@ static int toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
 
     generic_rx_checks((addr == 0x2E4));
+    
+    if (stop_forward_steer)
+    {
+        uint32_t eon_elapsed = get_ts_elapsed(TIM2->CNT, eon_tmr);
+        if (eon_elapsed>500000) //if no eon signal more than 300ms
+        {   
+           stop_forward_steer = 0;
+           eon_counter=0;
+        }
+    }
   }
   return valid;
 }
@@ -178,6 +192,20 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
       if (violation) {
         tx = 0;
       }
+    }
+
+    if (addr == 0x5aa)
+    {
+       if (stop_forward_steer==0)
+       {
+          eon_counter++;
+          if (eon_counter>20)   // 20*50ms, 1s. prevent switch between stock and eon too freqently 
+          {
+             stop_forward_steer = 1;
+          }
+       }
+       eon_tmr=TIM2->CNT;
+
     }
 
     // STEER: safety check on bytes 2-3
@@ -227,6 +255,13 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         tx = 0;
       }
     }
+    if ((addr == 0x2E4) || (addr == 0x343))
+    {
+      if (stop_forward_steer==0)   // eon not ready, panda is proxying camera's data
+      {
+        tx=0;
+      }
+    }
   }
 
   return tx;
@@ -250,8 +285,9 @@ static int toyota_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
       int addr = GET_ADDR(to_fwd);
       // block stock lkas messages and stock acc messages (if OP is doing ACC)
       // in TSS2, 0x191 is LTA which we need to block to avoid controls collision
-      int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
-      // in TSS2 the camera does ACC as well, so filter 0x343
+      int is_lkas_msg = ((addr == 0x2E4) /*|| (addr == 0x412)*/ || (addr == 0x191));
+      if (stop_forward_steer==0)
+        is_lkas_msg=0;
       int is_acc_msg = (addr == 0x343);
       int block_msg = is_lkas_msg || is_acc_msg;
       if (!block_msg) {
