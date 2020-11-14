@@ -836,7 +836,7 @@ int main(void) {
 
   // init to SILENT and can silent
   //set_safety_mode(SAFETY_SILENT, 0);
-  set_safety_mode(SAFETY_TOYOTA, 66)
+  set_safety_mode(SAFETY_TOYOTA, 66);
 
   // enable CAN TXs
   current_board->enable_can_transceivers(true);

@@ -7,4 +7,4 @@ cd /data/openpilot || exit
 rm -fr /tmp/scons_cache/
 find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 scons --clean
-reboot
+#reboot

@@ -518,8 +518,8 @@ struct CarParams {
     dsu @6;
     apgs @7;
     eon @17;
-    pandsu @18
-    
+    pandsu @18;
+
     # Honda only
     vsa @13; # Vehicle Stability Assist
     programmedFuelInjection @14;
