@@ -235,7 +235,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     }
 
     // disable steer require bit: bit 0, bit 25 when eon is ready
-    if (addr == 0x191)
+    /*if (addr == 0x191)
     {
        
        if (stop_forward_steer==1)
@@ -249,7 +249,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
        
 
     }
-    
+    */
     // STEER: safety check on bytes 2-3
     if (addr == 0x2E4) {
       int desired_torque = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
@@ -329,8 +329,8 @@ static int toyota_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
 
       // block stock lkas messages and stock acc messages (if OP is doing ACC)
       // in TSS2, 0x191 is LTA which we need to block to avoid controls collision
-      //int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
-      int is_lkas_msg = ((addr == 0x2E4) /*|| (addr == 0x412) || (addr == 0x191)*/);
+      int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
+      //int is_lkas_msg = ((addr == 0x2E4) /*|| (addr == 0x412) || (addr == 0x191)*/);
       if (stop_forward_steer==0)
         is_lkas_msg=0;
       
