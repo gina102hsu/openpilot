@@ -344,6 +344,7 @@ def main():
   # Run the update loop
   #  * every 1m, do a lightweight internet/update check
   #  * every 10m, do a full git fetch
+  """
   while not wait_helper.shutdown:
     update_now = wait_helper.ready_event.is_set()
     wait_helper.ready_event.clear()
@@ -390,7 +391,7 @@ def main():
 
     set_params(new_version, update_failed_count, exception)
     wait_helper.sleep(60)
-
+  """
   dismount_overlay()
 
 if __name__ == "__main__":
