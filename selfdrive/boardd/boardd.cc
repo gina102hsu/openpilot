@@ -328,7 +328,7 @@ void can_health_thread() {
     if (ignition && !ignition_last) {
       //int result = params.delete_db_value("CarVin");
       //assert((result == 0) || (result == ERR_NO_VALUE));
-      result = params.delete_db_value("CarParams");
+      int result = params.delete_db_value("CarParams");
       assert((result == 0) || (result == ERR_NO_VALUE));
 
       if (!safety_setter_thread_running) {
