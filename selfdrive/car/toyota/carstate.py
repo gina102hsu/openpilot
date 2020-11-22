@@ -179,7 +179,7 @@ class CarState(CarStateBase):
     if CP.carFingerprint == CAR.PRIUS:
       signals += [("STATE", "AUTOPARK_STATUS", 0)]
 
-     if CP.hasZss:
+    if CP.hasZss:
       signals += [("ZORRO_STEER", "SECONDARY_STEER_ANGLE", 0)]
 
 
