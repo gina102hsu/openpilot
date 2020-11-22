@@ -141,7 +141,10 @@ void update_sockets(UIState *s) {
     } else{
       s->status = scene.controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
     }
-
+    // add bb draw info
+    scene.angleSteers = scene.controls_state.getAngleSteers();
+    scene.angleSteersDes = scene.controls_state.getAngleSteersDes();
+	
     float alert_blinkingrate = scene.controls_state.getAlertBlinkingRate();
     if (alert_blinkingrate > 0.) {
       if (s->alert_blinked) {
@@ -198,6 +201,8 @@ void update_sockets(UIState *s) {
   }
   if (sm.updated("thermal")) {
     scene.thermal = sm["thermal"].getThermal();
+	//add bb draw
+    s->scene.cputemp=scene.thermal.getCpu()[0];
   }
   if (sm.updated("ubloxGnss")) {
     auto data = sm["ubloxGnss"].getUbloxGnss();

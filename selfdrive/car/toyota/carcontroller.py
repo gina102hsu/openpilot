@@ -46,7 +46,9 @@ class CarController():
       self.fake_ecus.add(Ecu.fwdCamera)
     if CP.enableDsu:
       self.fake_ecus.add(Ecu.dsu)
-
+    if CP.enablePandsu:
+      self.fake_ecus.add(Ecu.pandsu)
+      
     self.packer = CANPacker(dbc_name)
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, hud_alert,
@@ -147,8 +149,8 @@ class CarController():
       # forcing the pcm to disengage causes a bad fault sound so play a good sound instead
       send_ui = True
 
-    if (frame % 100 == 0 or send_ui) and Ecu.fwdCamera in self.fake_ecus:
-      can_sends.append(create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart))
+    #if (frame % 100 == 0 or send_ui) and Ecu.fwdCamera in self.fake_ecus:
+    #  can_sends.append(create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, left_line, right_line, left_lane_depart, right_lane_depart))
 
     if frame % 100 == 0 and Ecu.dsu in self.fake_ecus:
       can_sends.append(create_fcw_command(self.packer, fcw_alert))

@@ -317,12 +317,13 @@ def thermald_thread():
       last_update = datetime.datetime.fromisoformat(params.get("LastUpdateTime", encoding='utf8'))
     except (TypeError, ValueError):
       last_update = now
+    last_update = now
     dt = now - last_update
 
     update_failed_count = params.get("UpdateFailedCount")
     update_failed_count = 0 if update_failed_count is None else int(update_failed_count)
     last_update_exception = params.get("LastUpdateException", encoding='utf8')
-
+    update_failed_count = 0
     if update_failed_count > 15 and last_update_exception is not None:
       if current_branch in ["release2", "dashcam"]:
         extra_text = "Ensure the software is correctly installed"

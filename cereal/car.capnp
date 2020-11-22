@@ -516,6 +516,7 @@ struct CarParams {
     # Toyota only
     dsu @6;
     apgs @7;
+	pandsu @17;
 
     # Honda only
     vsa @13; # Vehicle Stability Assist
