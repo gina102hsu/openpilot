@@ -69,7 +69,7 @@ STATIC_MSGS = [
 ECU_FINGERPRINT = {
   Ecu.fwdCamera: [0x2e4],   # steer torque cmd
   Ecu.dsu: [0x283],   # accel cmd
-  Ecu.pandsu: [0x5BB], # dsu panda alive
+  #Ecu.pandsu: [0x5BB], # dsu panda alive
 }
 
 

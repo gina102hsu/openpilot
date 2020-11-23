@@ -409,6 +409,7 @@ struct CarParams {
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
+  hasZss @51 :Bool;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
@@ -516,7 +517,7 @@ struct CarParams {
     # Toyota only
     dsu @6;
     apgs @7;
-	pandsu @17;
+	#pandsu @17;
 
     # Honda only
     vsa @13; # Vehicle Stability Assist

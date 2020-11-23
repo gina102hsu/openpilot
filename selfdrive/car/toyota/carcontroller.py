@@ -46,8 +46,8 @@ class CarController():
       self.fake_ecus.add(Ecu.fwdCamera)
     if CP.enableDsu:
       self.fake_ecus.add(Ecu.dsu)
-    if CP.enablePandsu:
-      self.fake_ecus.add(Ecu.pandsu)
+    #if CP.enablePandsu:
+    #  self.fake_ecus.add(Ecu.pandsu)
       
     self.packer = CANPacker(dbc_name)
 
