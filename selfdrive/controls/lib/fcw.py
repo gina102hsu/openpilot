@@ -65,11 +65,11 @@ class FCWChecker():
       a_thr = interp(v_lead, _FCW_A_ACT_BP, _FCW_A_ACT_V)
       a_delta = min(mpc_solution_a[:15]) - min(0.0, a_ego)
 
-      future_fcw_allowed = all(c >= 10 for c in self.counters.values())
-      future_fcw_allowed = future_fcw_allowed and all(c >= 10 for c in self.common_counters.values())
-      future_fcw = (self.last_min_a < -3.0 or a_delta < a_thr) and future_fcw_allowed
+      future_fcw_allowed = all(c >= 4 for c in self.counters.values())
+      #future_fcw_allowed = future_fcw_allowed and all(c >= 10 for c in self.common_counters.values())
+      #future_fcw = (self.last_min_a < -3.0 or a_delta < a_thr) and future_fcw_allowed
 
-      if future_fcw and (self.last_fcw_time + 5.0 < cur_time):
+      if future_fcw_allowed and (self.last_fcw_time + 5.0 < cur_time):
         self.last_fcw_time = cur_time
         self.last_fcw_a = self.last_min_a
         return True

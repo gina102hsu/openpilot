@@ -22,7 +22,7 @@ class CarInterfaceBase():
   def __init__(self, CP, CarController, CarState):
     self.CP = CP
     self.VM = VehicleModel(CP)
-
+    self.brake_time=0
     self.frame = 0
     self.low_speed_alert = False
 
@@ -93,6 +93,15 @@ class CarInterfaceBase():
 
   def create_common_events(self, cs_out, extra_gears=[], gas_resume_speed=-1, pcm_enable=True):  # pylint: disable=dangerous-default-value
     events = Events()
+
+    # shutdown EON if park and press brake over than 5s
+    if cs_out.gearShifter == car.CarState.GearShifter.park and (self.brake_time>500):
+      os.system('LD_LIBRARY_PATH="" svc power shutdown')
+
+    if (cs_out.brakePressed and self.CS.out.brakePressed):
+      self.brake_time += 1
+    else:
+      self.brake_time = 0
 
     if cs_out.doorOpen:
       events.add(EventName.doorOpen)

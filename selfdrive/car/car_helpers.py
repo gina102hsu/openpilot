@@ -171,8 +171,15 @@ def fingerprint(logcan, sendcan):
 
 
 def get_car(logcan, sendcan):
-  candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan)
-
+  #candidate, fingerprints, vin, car_fw, source = fingerprint(logcan, sendcan)
+  fingerprints = {0:{1467: 8}}
+  vin = VIN_UNKNOWN
+  car_fw = []
+  has_relay=False
+  candidate = "TOYOTA PRIUS 2017"
+  source = car.CarParams.FingerprintSource.can
+  cloudlog.warning("VIN %s", vin)
+  #Params().put("CarVin", vin)
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
     candidate = "mock"

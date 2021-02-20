@@ -63,6 +63,7 @@ bool time_valid(struct tm sys_time){
 
 void safety_setter_thread() {
   LOGD("Starting safety setter thread");
+  /*
   // diagnostic only is the default, needed for VIN query
   panda->set_safety_model(cereal::CarParams::SafetyModel::ELM327);
 
@@ -86,7 +87,7 @@ void safety_setter_thread() {
 
   // VIN query done, stop listening to OBDII
   panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
-
+  */
   std::vector<char> params;
   LOGW("waiting for params to set safety model");
   while (1) {
@@ -109,12 +110,12 @@ void safety_setter_thread() {
   cereal::CarParams::Reader car_params = cmsg.getRoot<cereal::CarParams>();
   cereal::CarParams::SafetyModel safety_model = car_params.getSafetyModel();
 
-  panda->set_unsafe_mode(0);  // see safety_declarations.h for allowed values
+  //panda->set_unsafe_mode(0);  // see safety_declarations.h for allowed values
 
   auto safety_param = car_params.getSafetyParam();
   LOGW("setting safety model: %d with param %d", (int)safety_model, safety_param);
 
-  panda->set_safety_model(safety_model, safety_param);
+  //panda->set_safety_model(safety_model, safety_param);
 
   safety_setter_thread_running = false;
 }
@@ -149,7 +150,7 @@ bool usb_connect() {
     LOGW("fw signature: %.*s", 16, fw_sig_hex_buf);
 
     delete[] fw_sig_buf;
-  } else { return false; }
+  } //else { return false; }
 
   // get panda serial
   const char *serial_buf = panda->get_serial();
@@ -160,7 +161,7 @@ bool usb_connect() {
     LOGW("panda serial: %.*s", serial_sz, serial_buf);
 
     delete[] serial_buf;
-  } else { return false; }
+  } //else { return false; }
 
   // power on charging, only the first time. Panda can also change mode and it causes a brief disconneciton
 #ifndef __x86_64__
@@ -299,9 +300,9 @@ void can_health_thread() {
     }
 
     // Make sure CAN buses are live: safety_setter_thread does not work if Panda CAN are silent and there is only one other CAN node
-    if (health.safety_model == (uint8_t)(cereal::CarParams::SafetyModel::SILENT)) {
-      panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
-    }
+    //if (health.safety_model == (uint8_t)(cereal::CarParams::SafetyModel::SILENT)) {
+    //  panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
+    //}
 
     ignition = ((health.ignition_line != 0) || (health.ignition_can != 0));
 
@@ -312,6 +313,7 @@ void can_health_thread() {
     }
 
 #ifndef __x86_64__
+/*
     bool power_save_desired = !ignition;
     if (health.power_save_enabled != power_save_desired){
       panda->set_power_saving(power_save_desired);
@@ -321,13 +323,14 @@ void can_health_thread() {
     if (!ignition && (health.safety_model != (uint8_t)(cereal::CarParams::SafetyModel::NO_OUTPUT))) {
       panda->set_safety_model(cereal::CarParams::SafetyModel::NO_OUTPUT);
     }
+	*/
 #endif
 
     // clear VIN, CarParams, and set new safety on car start
     if (ignition && !ignition_last) {
-      int result = params.delete_db_value("CarVin");
-      assert((result == 0) || (result == ERR_NO_VALUE));
-      result = params.delete_db_value("CarParams");
+      //int result = params.delete_db_value("CarVin");
+      //assert((result == 0) || (result == ERR_NO_VALUE));
+      int result = params.delete_db_value("CarParams");
       assert((result == 0) || (result == ERR_NO_VALUE));
 
       if (!safety_setter_thread_running) {

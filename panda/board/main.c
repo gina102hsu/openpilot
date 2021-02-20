@@ -326,7 +326,7 @@ int usb_cb_control_msg(USB_Setup_TypeDef *setup, uint8_t *resp, bool hardwired) 
       break;
     // **** 0xc1: get hardware type
     case 0xc1:
-      resp[0] = hw_type;
+      resp[0] = HW_TYPE_BLACK_PANDA;//hw_type;
       resp_len = 1;
       break;
     // **** 0xd0: fetch serial number
@@ -719,6 +719,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         puts("EON hasn't sent a heartbeat for 0x");
         puth(heartbeat_counter);
         puts(" seconds. Safety is set to SILENT mode.\n");
+		/*
         if (current_safety_mode != SAFETY_SILENT) {
           set_safety_mode(SAFETY_SILENT, 0U);
         }
@@ -735,6 +736,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         } else {
           current_board->set_fan_power(0U);
         }
+		*/
       }
 
       // enter CDP mode when car starts to ensure we are charging a turned off EON
@@ -834,7 +836,8 @@ int main(void) {
   // use TIM2->CNT to read
 
   // init to SILENT and can silent
-  set_safety_mode(SAFETY_SILENT, 0);
+  //set_safety_mode(SAFETY_SILENT, 0);
+  set_safety_mode(SAFETY_TOYOTA, 66);
 
   // enable CAN TXs
   current_board->enable_can_transceivers(true);

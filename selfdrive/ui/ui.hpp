@@ -124,6 +124,13 @@ typedef struct UIScene {
   float max_distance;
   float lane_line_probs[4];
   float road_edge_stds[2];
+  
+  //bb draw
+  float angleSteersDes;
+  float angleSteers;
+  float cputemp;
+  bool controlsAllowed;
+  cereal::CarParams::SafetyModel safetyModel;
 } UIScene;
 
 typedef struct {
