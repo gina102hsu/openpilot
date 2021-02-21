@@ -402,7 +402,8 @@ def manager_init():
   if reg_res:
     dongle_id = reg_res
   else:
-    raise Exception("server registration failed")
+    #raise Exception("server registration failed")
+    dongle_id = "123456789"
   os.environ['DONGLE_ID'] = dongle_id
 
   if not dirty:
